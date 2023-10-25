@@ -7,7 +7,11 @@ __pycache__/
 *.so
 
 # data_used
-databases/*.xlsx
+databases/
+# jupyter notebook
+.ipynb_checkpoints
+data_explotation.ipynb
+
 
 # Distribution / packaging
 .Python

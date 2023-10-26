@@ -1,20 +1,36 @@
-from sklearn import svm
+from sklearn import svm, tree
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
+import numpy as np
 
 
 class Estimators:
-    def __init__(self, t_c, t_v, l_c, l_v):
-        self.test_class = t_c
-        self.test_values = t_v
-        self.learn_class = l_c
-        self.learn_values = l_v
+    def __init__(self, test_v, test_c, train_v,  train_c):
+        self.test_values = test_v
+        self.test_class = test_c
+        self.train_values = train_v
+        self.train_class = train_c
 
-    def SVM(self, kernel):
-        clf = svm.SVC(kernel=kernel)
-        clf.fit(X=self.learn_values, y=self.learn_class)
+    def SVM(self, kernel, degree):
+        clf = svm.SVC(kernel=kernel, degree=degree)
+        clf.fit(X=self.train_values, y=self.train_class)
         return clf.predict(X=self.test_values)
 
     def Bayes(self):
-        pass
+        gnb = GaussianNB()
+        gnb.fit(X=self.train_values, y=self.train_class)
+        return gnb.predict(X=self.test_values)
 
-    def efficiency(self, df):
-        pass
+    def DecisionTree(self):
+        wood = tree.DecisionTreeClassifier()
+        wood.fit(X=self.train_values, y=self.train_class)
+        return wood.predict(X=self.test_values)
+
+    def Forest(self, n_est):
+        forest = RandomForestClassifier(n_estimators=n_est)
+        forest.fit(X=self.train_values, y=self.train_class)
+        return forest.predict(X=self.test_values)
+
+    def efficiency(self, prediction):
+        accuracy = np.sum(self.test_class == prediction)/len(self.test_class)
+        return accuracy

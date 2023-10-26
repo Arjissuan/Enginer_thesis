@@ -12,3 +12,7 @@ class Implementations:
             corrls = dict(map(auto_corr, claster.keys()))
             for k in corrls.keys():
                 self.prep.heatmaps(corrls[k], title=k, size=size, font_scale=font_scale, fmt=fmt, annota=annota)
+
+
+    def predictions(self, df):
+        pass

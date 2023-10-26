@@ -1,8 +1,9 @@
 import pandas as pd
 import numpy as np
-from sklearn.model_selection import ShuffleSplit
+from sklearn.model_selection import ShuffleSplit, train_test_split
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 
 class DataPreparation:
     def __init__(self):
@@ -43,9 +44,10 @@ class DataPreparation:
         plt.show()
 
     def one_hot_encoder(self, hot_cols: tuple[str], df: pd.DataFrame) -> pd.DataFrame:
+        new_df = df.drop(columns=[hot_cols])
+
         for col in hot_cols:
             column = df[col]
-            new_df = df.drop(columns=[col])
             column_v_set = list(set(column))
             true_set = []
 
@@ -61,7 +63,7 @@ class DataPreparation:
             new_columns = pd.DataFrame()
             for value in new_col_vset:
                 bin_col = list(map(is_value_in, range(len(column))))
-                new_columns[f'{col}_{value}'] = bin_col
+                new_columns[value] = bin_col
 
             new_df = pd.concat([new_df, new_columns], axis=1)
 
@@ -71,3 +73,10 @@ class DataPreparation:
         shuffle = ShuffleSplit(n_splits=10, test_size=test_s, random_state=r_state)
         shuf_df = shuffle.split(X=x_df, y=y_df)
         return shuf_df
+
+    def test_data(self, x: pd.DataFrame,
+                  y: pd.DataFrame,
+                  train_size: float,
+                  r_state: float) -> tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]:
+        X_train, X_test, y_train, y_test = train_test_split(x,y ,train_size=train_size, random_state=r_state)
+        return X_train, y_train, X_test, y_test

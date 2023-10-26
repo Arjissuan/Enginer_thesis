@@ -6,7 +6,7 @@ from sklearn.model_selection import ShuffleSplit, train_test_split
 
 class Tests:
     def __init__(self):
-        self.df = pd.read_excel('../databases/AMP_30_03_2020_IMPROVED.xlsx').drop(columns=['Kolumna1'])
+        self.df = pd.read_excel('../databases/AMP_30_03_2020_IMPROVED.xlsx').drop(columns=['Kolumna1', 'Age Tre of life', 'Radius_gyration', 'Abrev.'])
         self.columns = ["A_BACT", "A_VIRAL", 'A_CANCER', 'A_FUNGAL', 'RANGE'] #'Abrev.', has to be done
         self.cechy = self.df.describe().columns
 
@@ -34,9 +34,10 @@ class Tests:
         plt.show()
 
     def one_hot_encoder(self, hot_cols: tuple[str], df: pd.DataFrame) -> pd.DataFrame:
+        new_df = df.drop(columns=[hot_cols])
+
         for col in hot_cols:
             column = df[col]
-            new_df = df.drop(columns=[col])
             column_v_set = list(set(column))
             true_set = []
 
@@ -58,11 +59,25 @@ class Tests:
 
         return new_df
 
+# this function is still in development
     def cross_vali_shufle(self, x_df, y_df, train_s, r_state):
         shuffle = ShuffleSplit(n_splits=10, train_size=train_s, random_state=r_state)
         for train_indx, test_indx in shuffle.split(X=x_df, y=y_df):
-            print(train_indx, test_indx)
+            # print(train_indx, test_indx)
+            # print(x_df.iloc[train_indx, :])
+            print(y_df.iloc[train_indx])
 
     def test_data(self, x, y, train_size, r_state):
         X_train, X_test, y_train, y_test = train_test_split(x,y ,train_size=train_size, random_state=r_state)
-        return X_train, y_train, X_test, y_test
+        return X_test, y_test, X_train, y_train
+
+    def mask_nans(self, df):
+        new_df = df.isnull()
+        polar_nans = new_df.query('@new_df.polarity == True').index
+        h_bond_nans = new_df.query('@new_df.h_bonding == True').index
+        aliphatic = new_df.query('@new_df.Aliphatic == True').index
+        if polar_nans.all() == h_bond_nans.all():
+            df = df.drop(index=polar_nans, axis=1)
+            return df.drop(index=aliphatic, axis=1)
+        else:
+            return IndexError

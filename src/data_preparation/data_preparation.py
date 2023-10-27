@@ -10,14 +10,14 @@ class DataPreparation:
         self.dataset = './databases/AMP_30_03_2020_IMPROVED.xlsx'
         self.chosen_data = './databases/Final_Selected_Diverse_AMPs.xlsx'
         self.columns = ["A_BACT", "A_VIRAL", 'A_CANCER', 'A_FUNGAL', 'RANGE']  # 'Abrev.', has to be done
-        self.cechy = self.get_dataset().describe().drop(columns=['Age Tre of life', 'Radius_gyration']).columns
+        self.cechy = self.get_dataset().describe().columns
 
     def get_dataset(self):
-        df = pd.read_excel(self.dataset).drop(columns=['Kolumna1'])
+        df = pd.read_excel(self.dataset).drop(columns=['Kolumna1', 'Age Tre of life', 'Radius_gyration', 'Abrev.'])
         return df
 
     def get_chosen_seqs(self):
-        df = pd.read_excel(self.chosen_data).drop(columns=['Kolumna1'])
+        df = pd.read_excel(self.chosen_data).drop(columns=['Kolumna1', 'Age Tre of life', 'Radius_gyration', 'Abrev.'])
         return df
 
     def clsterization(self, index, df):
@@ -78,5 +78,16 @@ class DataPreparation:
                   y: pd.DataFrame,
                   train_size: float,
                   r_state: float) -> tuple[pd.DataFrame, pd.Series, pd.DataFrame, pd.Series]:
-        X_train, X_test, y_train, y_test = train_test_split(x,y ,train_size=train_size, random_state=r_state)
-        return X_train, y_train, X_test, y_test
+        X_train, X_test, y_train, y_test = train_test_split(x, y, train_size=train_size, random_state=r_state)
+        return X_test, y_test, X_train, y_train
+
+    def mask_nans(self, df: pd.DataFrame):
+        new_df = df.isnull()
+        polar_nans = new_df.query('@new_df.polarity == True').index
+        h_bond_nans = new_df.query('@new_df.h_bonding == True').index
+        aliphatic = new_df.query('@new_df.Aliphatic == True').index
+        if polar_nans.all() == h_bond_nans.all():
+            df = df.drop(index=polar_nans, axis=1)
+            return df.drop(index=aliphatic, axis=1)
+        else:
+            return IndexError

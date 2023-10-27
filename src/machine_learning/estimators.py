@@ -1,7 +1,9 @@
+import pandas as pd
 from sklearn import svm, tree
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 import numpy as np
+
 
 
 class Estimators:
@@ -31,6 +33,43 @@ class Estimators:
         forest.fit(X=self.train_values, y=self.train_class)
         return forest.predict(X=self.test_values)
 
-    def efficiency(self, prediction):
-        accuracy = np.sum(self.test_class == prediction)/len(self.test_class)
-        return accuracy
+    def confusion_matrix(self, prediction, predicted_value, estimator):
+        actual = self.test_class == predicted_value
+        predicted = prediction == predicted_value
+        actual_non = self.test_class != predicted_value
+        predicted_non = prediction != predicted_value
+
+        TP = np.sum(np.logical_and(actual, predicted))
+        TN = np.sum(np.logical_and(actual_non, predicted_non))
+        FP = np.sum(np.logical_and(actual_non, predicted))
+        FN = np.sum(np.logical_and(actual, predicted_non))
+
+        accuracy = (TN+TP)/(TP+TN+FP+FN)
+        error = (FP+FN)/(TP+TN+FP+FN)
+
+        sens = TP/(TP+FN)
+        spec = TN/(TN+FP)
+        PPV = TP/(TP+FP)
+        NPV = TN/(TN+FN)
+        matrix = pd.DataFrame(data=[TP,
+                                    TN,
+                                    FP,
+                                    FN,
+                                    accuracy,
+                                    error,
+                                    sens,
+                                    spec,
+                                    PPV,
+                                    NPV],
+                              index=['True Positive',
+                                       'True Negative',
+                                       'False Positive',
+                                       'False Negative',
+                                       'Accuracy',
+                                       'Error',
+                                       'Sensitivity',
+                                       'Specificity',
+                                       'PPV',
+                                       'NPV'],
+                              columns=[estimator])
+        return matrix

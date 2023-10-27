@@ -34,7 +34,7 @@ class Tests:
         plt.show()
 
     def one_hot_encoder(self, hot_cols: tuple[str], df: pd.DataFrame) -> pd.DataFrame:
-        new_df = df.drop(columns=[hot_cols])
+        new_df = df.drop(columns=hot_cols[0])
 
         for col in hot_cols:
             column = df[col]

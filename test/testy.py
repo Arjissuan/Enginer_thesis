@@ -9,6 +9,7 @@ class Tests:
         self.df = pd.read_excel('../databases/AMP_30_03_2020_IMPROVED.xlsx').drop(columns=['Kolumna1', 'Age Tre of life', 'Radius_gyration', 'Abrev.'])
         self.columns = ["A_BACT", "A_VIRAL", 'A_CANCER', 'A_FUNGAL', 'RANGE'] #'Abrev.', has to be done
         self.cechy = self.df.describe().columns
+        self.chosen_AMP_df = pd.read_excel('../databases/Final_Selected_Diverse_AMPs.xlsx').drop(columns=['Kolumna1', 'Age Tre of life', 'Radius_gyration', 'Abrev.'])
 
     def clsterization(self, index):
         item = self.columns[index]
@@ -71,13 +72,24 @@ class Tests:
         X_train, X_test, y_train, y_test = train_test_split(x,y ,train_size=train_size, random_state=r_state)
         return X_test, y_test, X_train, y_train
 
+    def flatten(self, lista):
+        if isinstance(lista, (list, tuple)):
+            for item in lista:
+                for l in self.flatten(item):
+                    yield l
+        else:
+            yield lista
+
     def mask_nans(self, df):
         new_df = df.isnull()
-        polar_nans = new_df.query('@new_df.polarity == True').index
-        h_bond_nans = new_df.query('@new_df.h_bonding == True').index
-        aliphatic = new_df.query('@new_df.Aliphatic == True').index
-        if polar_nans.all() == h_bond_nans.all():
-            df = df.drop(index=polar_nans, axis=1)
-            return df.drop(index=aliphatic, axis=1)
-        else:
-            return IndexError
+        indexing_nans = lambda x: (list(new_df[new_df[x] == True].index) if 1 in new_df[x] else np.nan)
+        indexes = list(map(indexing_nans, new_df.columns))
+        nans_indexes = []
+        all_indexes = lambda x: (nans_indexes.append(indexes[x]) if len(indexes[x]) > 0 and indexes[x] not in nans_indexes else 0)
+        list(map(all_indexes, range(len(indexes))))
+        nans_indx = list(set(self.flatten(nans_indexes)))
+        return df.drop(index=nans_indx)
+
+    def data_normalization(self, df, cols_to_perc):
+
+        return

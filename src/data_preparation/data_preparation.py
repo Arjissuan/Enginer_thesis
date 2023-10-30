@@ -83,11 +83,21 @@ class DataPreparation:
 
     def mask_nans(self, df: pd.DataFrame):
         new_df = df.isnull()
-        polar_nans = new_df.query('@new_df.polarity == True').index
-        h_bond_nans = new_df.query('@new_df.h_bonding == True').index
-        aliphatic = new_df.query('@new_df.Aliphatic == True').index
-        if polar_nans.all() == h_bond_nans.all():
-            df = df.drop(index=polar_nans, axis=1)
-            return df.drop(index=aliphatic, axis=1)
+        indexing_nans = lambda x: (list(new_df[new_df[x] == True].index) if 1 in new_df[x] else np.nan)
+        indexes = list(map(indexing_nans, new_df.columns))
+        nans_indexes = []
+        all_indexes = lambda x: (
+            nans_indexes.append(indexes[x]) if len(indexes[x]) > 0 and indexes[x] not in nans_indexes else 0)
+        list(map(all_indexes, range(len(indexes))))
+        nans_indx = list(set(self.flatten(nans_indexes)))
+        return df.drop(index=nans_indx)
+
+    def flatten(self, lista):
+        if isinstance(lista, (list, tuple)):
+            for item in lista:
+                for l in self.flatten(item):
+                    yield l
         else:
-            return IndexError
+            yield lista
+
+

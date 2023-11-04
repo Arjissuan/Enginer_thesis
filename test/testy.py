@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from collections.abc import Generator
 from sklearn.model_selection import ShuffleSplit, train_test_split
 
 class Tests:
@@ -88,8 +89,27 @@ class Tests:
         all_indexes = lambda x: (nans_indexes.append(indexes[x]) if len(indexes[x]) > 0 and indexes[x] not in nans_indexes else 0)
         list(map(all_indexes, range(len(indexes))))
         nans_indx = list(set(self.flatten(nans_indexes)))
-        return df.drop(index=nans_indx)
+        return df.drop(index=nans_indx) #have to change indexing after this
 
-    def data_normalization(self, df, cols_to_perc):
+    def data_normalization(self, df, rel_col, cols_to_perc):
 
-        return
+        def generate_cols(data, relcol, num_of_percol):
+            for i in num_of_percol:
+                genereted_cols = data.loc[:, relcol]
+                yield genereted_cols
+
+        cols_list = list(generate_cols(df, rel_col, range(len(cols_to_perc))))
+        context_cols = pd.DataFrame(cols_list).values
+        chosen_cols = df.loc[:, cols_to_perc].values.T
+        normalied_cols = np.divide(np.multiply(chosen_cols, 100), context_cols).T
+        return pd.DataFrame(data=normalied_cols, columns=cols_to_perc)
+
+    def count_amino_acids(self, df: pd.Series, amiacids: list[str]) -> Generator[int]:
+        if len(amiacids) == 1:
+            count_amiacid = lambda x: (1 if amiacids[0] == x else 0)
+            for seqence in df:
+                yield np.sum(list(map(count_amiacid, seqence)))
+        elif len(amiacids) > 1:
+            count_amiacid = lambda x: (1 if x in amiacids else 0)
+            for seqence in df:
+                yield np.sum(list(map(count_amiacid, seqence)))

@@ -8,6 +8,9 @@ class Implementations:
         self.prep = DataPreparation()
         self.est = Estimators
 
+    def dataframe_preparation(self, df: pd.DataFrame, new_columns: list[str], count_amins: list[list[str]]):
+        pass
+
     def clasterization_results(self, df, size=(40,35), font_scale=1.5, fmt='.1f', annota=7):
         for indx in range(len(self.prep.columns)):
             claster = self.prep.clsterization(indx, df)

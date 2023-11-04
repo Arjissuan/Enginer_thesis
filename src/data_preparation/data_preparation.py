@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import ShuffleSplit, train_test_split
 import matplotlib.pyplot as plt
+from collections.abc import Generator
 import seaborn as sns
 
 
@@ -20,7 +21,7 @@ class DataPreparation:
         df = pd.read_excel(self.chosen_data).drop(columns=['Kolumna1', 'Age Tre of life', 'Radius_gyration', 'Abrev.'])
         return df
 
-    def clsterization(self, index, df):
+    def clsterization(self, index, df): #change it to more ogolna
         item = self.columns[index]
         values_set = tuple(set(df[item]))
         df_list = dict(map(lambda x: (f'{item}_{x}', df[df[item] == x]), values_set))
@@ -100,4 +101,26 @@ class DataPreparation:
         else:
             yield lista
 
+    def data_normalization(self, df, rel_col, cols_to_perc):
 
+        def generate_cols(data, relcol, num_of_percol):
+            for i in num_of_percol:
+                genereted_cols = data.loc[:, relcol]
+                yield genereted_cols
+
+        cols_list = list(generate_cols(df, rel_col, range(len(cols_to_perc))))
+        context_cols = pd.DataFrame(cols_list).values
+        chosen_cols = df.loc[:, cols_to_perc].values.T
+        normalied_cols = np.divide(np.multiply(chosen_cols, 100), context_cols)
+
+        return pd.DataFrame(data=normalied_cols, columns=cols_to_perc)
+
+    def count_amino_acids(self, df: pd.Series, amiacids: list[str]) -> Generator[int]:
+        if len(amiacids) == 1:
+            count_amiacid = lambda x: (1 if amiacids[0] == x else 0)
+            for seqence in df:
+                yield np.sum(list(map(count_amiacid, seqence)))
+        elif len(amiacids) > 1:
+            count_amiacid = lambda x: (1 if x in amiacids else 0)
+            for seqence in df:
+                yield np.sum(list(map(count_amiacid, seqence)))

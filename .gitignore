@@ -11,6 +11,8 @@ databases/
 # jupyter notebook
 .ipynb_checkpoints
 data_explotation.ipynb
+# engineer theseis
+documents/
 
 
 # Distribution / packaging

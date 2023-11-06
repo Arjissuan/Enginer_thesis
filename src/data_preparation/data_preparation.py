@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import ShuffleSplit, train_test_split
 import matplotlib.pyplot as plt
-from collections.abc import Generator
+from collections.abc import Iterator
 import seaborn as sns
 
 
@@ -11,7 +11,7 @@ class DataPreparation:
         self.dataset = './databases/AMP_30_03_2020_IMPROVED.xlsx'
         self.chosen_data = './databases/Final_Selected_Diverse_AMPs.xlsx'
         self.columns = ["A_BACT", "A_VIRAL", 'A_CANCER', 'A_FUNGAL', 'RANGE']  # 'Abrev.', has to be done
-        self.cechy = self.get_dataset().describe().columns
+        #self.cechy = self.get_dataset().describe().columns
 
     def get_dataset(self):
         df = pd.read_excel(self.dataset).drop(columns=['Kolumna1', 'Age Tre of life', 'Radius_gyration', 'Abrev.'])
@@ -21,6 +21,9 @@ class DataPreparation:
         df = pd.read_excel(self.chosen_data).drop(columns=['Kolumna1', 'Age Tre of life', 'Radius_gyration', 'Abrev.'])
         return df
 
+    def get_cechy(self, df):
+        return df.describe().columns
+
     def clsterization(self, index, df): #change it to more ogolna
         item = self.columns[index]
         values_set = tuple(set(df[item]))
@@ -28,20 +31,20 @@ class DataPreparation:
         return df_list
 
     def correlation(self, df):
-        datarrays = df[self.cechy].values.T
+        datarrays = df[self.get_cechy(df)].values.T
         m_df = np.ma.masked_invalid(datarrays)
         corr = np.ma.corrcoef(m_df)
         return corr
 
-    def heatmaps(self, df, title, size=(40,35), font_scale=1.5, fmt='.1f', annota=7):
+    def heatmaps(self, df, cechy, title, size=(40,35), font_scale=1.5, fmt='.1f', annota=7):
         plt.figure(figsize=size)
         plt.title(title)
         sns.set(font_scale=font_scale, )
         sns.heatmap(df, cbar=True, annot=True,
                     square=True, fmt=fmt,
                     annot_kws={'size': annota},
-                    xticklabels=self.cechy,
-                    yticklabels=self.cechy)
+                    xticklabels=cechy,
+                    yticklabels=cechy)
         plt.show()
 
     def one_hot_encoder(self, hot_cols: tuple[str], df: pd.DataFrame) -> pd.DataFrame:
@@ -91,9 +94,9 @@ class DataPreparation:
             nans_indexes.append(indexes[x]) if len(indexes[x]) > 0 and indexes[x] not in nans_indexes else 0)
         list(map(all_indexes, range(len(indexes))))
         nans_indx = list(set(self.flatten(nans_indexes)))
-        return df.drop(index=nans_indx)
+        return df.drop(index=nans_indx).reset_index(drop=True)
 
-    def flatten(self, lista):
+    def flatten(self, lista: list) -> list:
         if isinstance(lista, (list, tuple)):
             for item in lista:
                 for l in self.flatten(item):
@@ -101,7 +104,7 @@ class DataPreparation:
         else:
             yield lista
 
-    def data_normalization(self, df, rel_col, cols_to_perc):
+    def data_normalization(self, df:pd.DataFrame, rel_col: str, cols_to_perc: list[str]) -> pd.DataFrame:
 
         def generate_cols(data, relcol, num_of_percol):
             for i in num_of_percol:
@@ -111,11 +114,11 @@ class DataPreparation:
         cols_list = list(generate_cols(df, rel_col, range(len(cols_to_perc))))
         context_cols = pd.DataFrame(cols_list).values
         chosen_cols = df.loc[:, cols_to_perc].values.T
-        normalied_cols = np.divide(np.multiply(chosen_cols, 100), context_cols)
+        normalied_cols = np.divide(np.multiply(chosen_cols, 100), context_cols).T
 
         return pd.DataFrame(data=normalied_cols, columns=cols_to_perc)
 
-    def count_amino_acids(self, df: pd.Series, amiacids: list[str]) -> Generator[int]:
+    def count_amino_acids(self, df: pd.Series, amiacids: list[str]) -> Iterator[int]:
         if len(amiacids) == 1:
             count_amiacid = lambda x: (1 if amiacids[0] == x else 0)
             for seqence in df:

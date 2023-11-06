@@ -89,7 +89,7 @@ class Tests:
         all_indexes = lambda x: (nans_indexes.append(indexes[x]) if len(indexes[x]) > 0 and indexes[x] not in nans_indexes else 0)
         list(map(all_indexes, range(len(indexes))))
         nans_indx = list(set(self.flatten(nans_indexes)))
-        return df.drop(index=nans_indx) #have to change indexing after this
+        return df.drop(index=nans_indx).reset_index(drop=True)
 
     def data_normalization(self, df, rel_col, cols_to_perc):
 
@@ -102,6 +102,7 @@ class Tests:
         context_cols = pd.DataFrame(cols_list).values
         chosen_cols = df.loc[:, cols_to_perc].values.T
         normalied_cols = np.divide(np.multiply(chosen_cols, 100), context_cols).T
+
         return pd.DataFrame(data=normalied_cols, columns=cols_to_perc)
 
     def count_amino_acids(self, df: pd.Series, amiacids: list[str]) -> Generator[int]:

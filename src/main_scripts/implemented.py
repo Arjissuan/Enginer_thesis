@@ -1,5 +1,5 @@
 import pandas as pd
-
+import numpy as np
 from src.data_preparation.data_preparation import DataPreparation
 from src.machine_learning.estimators import Estimators
 
@@ -8,21 +8,38 @@ class Implementations:
         self.prep = DataPreparation()
         self.est = Estimators
 
-    def dataframe_preparation(self, df: pd.DataFrame, new_columns: list[str], count_amins: list[list[str]]):
-        pass
+    def dataframe_preparation(self, df: pd.DataFrame, new_columns: list[str], count_amins: list[list[str]]) -> pd.DataFrame:
+        #new_columns = ['Cysteines', 'Small_aminoacids']
+        columns = ['Aliphatic',
+                   'Aromatic',
+                   'NonPolar',
+                   'Polar',
+                   'Charged',
+                   'Basic',
+                   'Acidic', ]
+        new_df = self.prep.mask_nans(df)
+        for indx, item in enumerate(count_amins):
+            vector = np.asarray(list(self.prep.count_amino_acids(new_df['Sequence'], item)), dtype=np.int32)
+            new_df[new_columns[indx]] = vector
+
+        normalized_df = self.prep.data_normalization(new_df, 'Length', new_columns)
+        normalized_df2 = self.prep.data_normalization(new_df, 'Length', columns)
+        data_frame = new_df.drop(columns=columns + new_columns)
+        return pd.concat([normalized_df, normalized_df2, data_frame], axis=1)
 
     def clasterization_results(self, df, size=(40,35), font_scale=1.5, fmt='.1f', annota=7):
+        cechy = self.prep.get_cechy(df)
         for indx in range(len(self.prep.columns)):
             claster = self.prep.clsterization(indx, df)
             auto_corr = lambda x: (x, self.prep.correlation(claster[x]))
             corrls = dict(map(auto_corr, claster.keys()))
             for k in corrls.keys():
-                self.prep.heatmaps(corrls[k], title=k, size=size, font_scale=font_scale, fmt=fmt, annota=annota)
+                self.prep.heatmaps(corrls[k], cechy=cechy, title=k, size=size, font_scale=font_scale, fmt=fmt, annota=annota)
 
 
     def predictions(self, df, y_col, pre_value):
         masked_df = self.prep.mask_nans(df)
-        xtest, ytest, xtrain, ytrain = self.prep.test_data(masked_df[self.prep.cechy],
+        xtest, ytest, xtrain, ytrain = self.prep.test_data(masked_df[self.prep.get_cechy(df)],
                                                            masked_df[y_col],
                                                            train_size=0.8,
                                                            r_state=10)

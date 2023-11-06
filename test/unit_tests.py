@@ -60,12 +60,12 @@ def test_count_aminoacis():
 def test_data_prep(): #change indexing of masking nans
     new_cols = ['Cysteines', 'Small_aminoacids']
     columns = ['Aliphatic',
-                            'Aromatic',
-                              'NonPolar',
-                              'Polar',
-                              'Charged',
-                              'Basic',
-                              'Acidic',]
+               'Aromatic',
+               'NonPolar',
+               'Polar',
+               'Charged',
+               'Basic',
+                'Acidic',]
     new_df = tt.mask_nans(tt.df)
     for indx,item in enumerate([['C',], ['G', 'L']]):
         vector = np.asarray(list(tt.count_amino_acids(new_df['Sequence'], item)), dtype=np.int32)
@@ -73,9 +73,7 @@ def test_data_prep(): #change indexing of masking nans
     normalized_df = tt.data_normalization(new_df, 'Length', new_cols)
     normalized_df2 = tt.data_normalization(new_df, 'Length', columns)
     data_frame = new_df.drop(columns=columns+new_cols)
-    print(data_frame)
-    print(normalized_df)
-    # print(pd.concat([normalized_df, new_df], axis=1))
+    return pd.concat([normalized_df, normalized_df2, data_frame], axis=1)
 
 if __name__ == "__main__":
     # test_masking_nans()

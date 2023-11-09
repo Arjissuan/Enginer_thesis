@@ -80,5 +80,4 @@ if __name__ == "__main__":
     # data_normalization_test()
     tt = Tests()
     # print(tt.cross_vali_shufle(tt.df[tt.cechy], tt.df[tt.columns[0]],0.25, 0))
-    df = test_data_prep()
-    print(df)
+

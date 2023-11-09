@@ -27,14 +27,21 @@ class Implementations:
         data_frame = new_df.drop(columns=columns + new_columns)
         return pd.concat([normalized_df, normalized_df2, data_frame], axis=1)
 
-    def clasterization_results(self, df, size=(40,35), font_scale=1.5, fmt='.1f', annota=7):
+    def clasterization_results(self, df, size=(40,35), font_scale=1.5, fmt='.1f', annota=7, save=False):
         cechy = self.prep.get_cechy(df)
         for indx in range(len(self.prep.columns)):
             claster = self.prep.clsterization(indx, df)
             auto_corr = lambda x: (x, self.prep.correlation(claster[x]))
             corrls = dict(map(auto_corr, claster.keys()))
             for k in corrls.keys():
-                self.prep.heatmaps(corrls[k], cechy=cechy, title=k, size=size, font_scale=font_scale, fmt=fmt, annota=annota)
+                self.prep.heatmaps(corrls[k],
+                                   cechy=cechy,
+                                   title=k,
+                                   size=size,
+                                   font_scale=font_scale,
+                                   fmt=fmt,
+                                   annota=annota,
+                                   save=save)
 
 
     def predictions(self, df, y_col, pre_value):

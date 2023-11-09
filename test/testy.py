@@ -114,3 +114,8 @@ class Tests:
             count_amiacid = lambda x: (1 if x in amiacids else 0)
             for seqence in df:
                 yield np.sum(list(map(count_amiacid, seqence)))
+
+
+    def tandem_sequences(self, sequence):
+        for i, aminoacid in enumerate(sequence):
+            if sequence[i+1] ==

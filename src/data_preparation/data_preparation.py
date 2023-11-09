@@ -4,6 +4,7 @@ from sklearn.model_selection import ShuffleSplit, train_test_split
 import matplotlib.pyplot as plt
 from collections.abc import Iterator
 import seaborn as sns
+import os
 
 
 class DataPreparation:
@@ -11,6 +12,7 @@ class DataPreparation:
         self.dataset = './databases/AMP_30_03_2020_IMPROVED.xlsx'
         self.chosen_data = './databases/Final_Selected_Diverse_AMPs.xlsx'
         self.columns = ["A_BACT", "A_VIRAL", 'A_CANCER', 'A_FUNGAL', 'RANGE']  # 'Abrev.', has to be done
+        self.figure_dest = './figures'
         #self.cechy = self.get_dataset().describe().columns
 
     def get_dataset(self):
@@ -36,7 +38,7 @@ class DataPreparation:
         corr = np.ma.corrcoef(m_df)
         return corr
 
-    def heatmaps(self, df, cechy, title, size=(40,35), font_scale=1.5, fmt='.1f', annota=7):
+    def heatmaps(self, df, cechy, title, size=(40,35), font_scale=1.5, fmt='.1f', annota=7, save=False):
         plt.figure(figsize=size)
         plt.title(title)
         sns.set(font_scale=font_scale, )
@@ -45,6 +47,9 @@ class DataPreparation:
                     annot_kws={'size': annota},
                     xticklabels=cechy,
                     yticklabels=cechy)
+        if save is True:
+            name = f'{title}.pdf'
+            plt.savefig(os.path.join(self.figure_dest, name))
         plt.show()
 
     def one_hot_encoder(self, hot_cols: tuple[str], df: pd.DataFrame) -> pd.DataFrame:

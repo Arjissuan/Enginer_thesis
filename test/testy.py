@@ -19,7 +19,7 @@ class Tests:
         return df_list
 
     def correlation(self, df):
-        datarrays = df[self.cechy].values.T
+        datarrays = df[df.describe().columns].values.T
         m_df = np.ma.masked_invalid(datarrays)
         corr = np.ma.corrcoef(m_df)
         return corr
@@ -115,7 +115,36 @@ class Tests:
             for seqence in df:
                 yield np.sum(list(map(count_amiacid, seqence)))
 
-
-    def tandem_sequences(self, sequence):
+    def repetitions(self, sequence):
+        repeted_amins = {}
+        # making vector for every index of next positions with marking if next positions have the same aminoacid or not
         for i, aminoacid in enumerate(sequence):
-            if sequence[i+1] ==
+            repeted_amins[i] = []
+            for j in range(i, len(sequence)):
+                if aminoacid == sequence[j]:
+                    repeted_amins[i].append(1)
+                else:
+                    repeted_amins[i].append(0)
+        # print(repeted_amins)
+        # making map of every center of repetition
+        repe_centers = [0]*len(sequence)
+        for i, vectors in enumerate(repeted_amins.values()):
+            if len(vectors) >= 3:
+                for j in range(1, len(list(vectors)) - 1):
+                    if vectors[j] == 1 and vectors[j - 1] == 1 and vectors[j + 1] == 1:
+                        repe_centers[i+j] = sequence[i+j]
+        # print(repe_centers)
+        # changing map of repetition centers into listed repetiotions
+        listed_repets = ''
+        for indx, amino in enumerate(repe_centers):
+            if indx < len(repe_centers)-1:
+                if amino == 0 and repe_centers[indx + 1] != 0:
+                    listed_repets += repe_centers[indx + 1]
+            if amino != 0:
+                listed_repets+=amino
+            if amino == 0 and repe_centers[indx-1]!= 0 :
+                listed_repets+=f'{repe_centers[indx-1]}_'
+
+        listed_repets = listed_repets.split('_')
+        # print(''.join(listed_repets))
+        return listed_repets[0:len(listed_repets)-1]

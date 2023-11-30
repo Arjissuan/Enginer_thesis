@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn import svm, tree
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LinearRegression
 import numpy as np
 
 
@@ -33,16 +34,16 @@ class Estimators:
         forest.fit(X=self.train_values, y=self.train_class)
         return forest.predict(X=self.test_values)
 
-    def confusion_matrix(self, prediction, predicted_value, estimator):
-        actual = self.test_class == predicted_value
-        predicted = prediction == predicted_value
-        actual_non = self.test_class != predicted_value
-        predicted_non = prediction != predicted_value
+    def Linear(self):
+        linen = LinearRegression()
+        linen.fit(X=self.train_values, y=self.train_class)
+        return linen.predict(X=self.test_values)
 
-        TP = np.sum(np.logical_and(actual, predicted))
-        TN = np.sum(np.logical_and(actual_non, predicted_non))
-        FP = np.sum(np.logical_and(actual_non, predicted))
-        FN = np.sum(np.logical_and(actual, predicted_non))
+    def confusion_matrix(self, prediction, estimator):
+        TP = np.sum(np.logical_and(self.test_class, prediction))
+        TN = np.sum(np.logical_and(np.logical_not(self.test_class), np.logical_not(prediction)))
+        FP = np.sum(np.logical_and(np.logical_not(self.test_class), prediction))
+        FN = np.sum(np.logical_and(self.test_class, np.logical_not(prediction)))
 
         accuracy = (TN+TP)/(TP+TN+FP+FN)
         error = (FP+FN)/(TP+TN+FP+FN)

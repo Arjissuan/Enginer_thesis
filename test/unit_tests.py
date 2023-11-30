@@ -1,5 +1,4 @@
 import pandas as pd
-
 from testy import Tests
 from src.machine_learning.estimators import Estimators
 import numpy as np
@@ -75,9 +74,34 @@ def test_data_prep(): #change indexing of masking nans
     data_frame = new_df.drop(columns=columns+new_cols)
     return pd.concat([normalized_df, normalized_df2, data_frame], axis=1)
 
+def repetiton_test():
+    tt = Tests()
+    print(tt.repetitions('QCCCCGSLGGGLLCQV'))
+    print(tt.repetitions('CCGHQC'))
+    print(tt.repetitions('CLGGGLLLQVKYYY'))
+    print(tt.repetitions('UUUUUGGCCCLCCCCJKUUUUOPQUUUUU'))
+    print(tt.repetitions('DDDDDDD'))
+
+def corelations_drop(column, corr_level, corrmat_or_df):
+    tt = Tests()
+    df = test_data_prep()
+    cechy = df.describe().columns
+    corrmat = tt.correlation(df=df)
+    indx = tuple(i for i, item in enumerate(cechy) if item == column)[0]
+    corr_vecor = corrmat[:, indx]
+    unrelated_cols = [i for i, item in enumerate(corr_vecor) if item < corr_level]
+    firstmatr = corrmat[unrelated_cols, :]
+    secodn_matr = firstmatr[:, unrelated_cols]
+    if corrmat_or_df == 'df':
+        return df.iloc[:, unrelated_cols]
+    else:
+        return secodn_matr
+
+
 if __name__ == "__main__":
     # test_masking_nans()
     # data_normalization_test()
     tt = Tests()
     # print(tt.cross_vali_shufle(tt.df[tt.cechy], tt.df[tt.columns[0]],0.25, 0))
-
+    #repetiton_test()
+    #corelations_drop('BomanIndex', 0.5, 'df')

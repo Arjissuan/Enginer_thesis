@@ -2,17 +2,17 @@ import pandas as pd
 from sklearn import svm, tree
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LinearRegression
+from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 import numpy as np
 
 
 
 class Estimators:
-    def __init__(self, test_v, test_c, train_v,  train_c):
-        self.test_values = test_v
-        self.test_class = test_c
-        self.train_values = train_v
-        self.train_class = train_c
+    def __init__(self, test_X, test_y, train_X, train_y):
+        self.test_values = test_X
+        self.test_class = test_y
+        self.train_values = train_X
+        self.train_class = train_y
 
     def SVM(self, kernel, degree):
         clf = svm.SVC(kernel=kernel, degree=degree)
@@ -34,10 +34,10 @@ class Estimators:
         forest.fit(X=self.train_values, y=self.train_class)
         return forest.predict(X=self.test_values)
 
-    def Linear(self):
-        linen = LinearRegression()
-        linen.fit(X=self.train_values, y=self.train_class)
-        return linen.predict(X=self.test_values)
+    def QuadraticDiscrAnal(self):
+        quadro = QuadraticDiscriminantAnalysis()
+        quadro.fit(X=self.train_values, y=self.train_class)
+        return quadro.predict(X=self.test_values)
 
     def confusion_matrix(self, prediction, estimator):
         TP = np.sum(np.logical_and(self.test_class, prediction))

@@ -1,5 +1,6 @@
-import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
 from src.data_preparation.data_preparation import DataPreparation
 
 class Implementations:
@@ -48,8 +49,7 @@ class Implementations:
             data_frame = new_df.drop(columns=new_columns)
             return pd.concat([normalized_df, data_frame], axis=1)
 
-
-    def repetition_results(self, df: pd.DataFrame) -> pd.DataFrame:
+    def repetition_results(self, sequences: pd.Series, lengths: pd.Series) -> pd.DataFrame:
         def generate_repetions(seqs):
             for s in seqs:
                 vector = self.prep.repetitions(s)
@@ -57,13 +57,12 @@ class Implementations:
 
         code_letters = ['A', 'G', 'I', 'L', 'P', 'V', 'F', 'W', 'Y', 'D', 'E', 'R', 'H', 'K', 'S', 'T', 'C', 'M',
                         'N' 'Q']
-        sequences = df['Sequence']
         repeted = pd.DataFrame(data=list(generate_repetions(sequences)),
                                columns=['Listed_Repetitions', 'Total_repetitions']
                                )
         repetition_length = self.prep.count_amino_acids(seria=repeted['Total_repetitions'], amiacids=code_letters)
         repeted['Repetitions_length'] = list(repetition_length)
-        repeted['Peptide_length'] = df['Length'].values
+        repeted['Peptide_length'] = lengths.values
         repeted['Repetitions_percentages'] = self.prep.data_normalization(repeted, 'Peptide_length', ['Repetitions_length',])
         repeted['Number_of_repe'] = list(map(lambda x: len(x), repeted['Listed_Repetitions']))
         return repeted
@@ -93,7 +92,7 @@ class Implementations:
         corelated = list(cechy[i] for i,c in enumerate(corrmat[indx]) if c > corr_level)
         return df.drop(columns=corelated, axis=1)
 
-    def corelations_presentation(self, df, column, level, heatmaps=1, save_heatm=False, save_df=False):
+    def corelations_presentation(self, df: pd.DataFrame, column: str, level: float = 2.48, heatmaps=1, save_heatm=False, save_df=False):
         corrmat = self.prep.correlation(df)
         matrix_low = self.prep.correlation(df[df[column] <= level])
         matrix_high = self.prep.correlation(df[df[column] > level])
@@ -114,12 +113,11 @@ class Implementations:
                 matrix.to_excel(input('Corelation matrix destination:'))
         return crmm, crmm_low, crmm_high, roznica
 
-    def corelations_rank(self, matrix, column):
-        vector = matrix[column].copy()
-        array = {}
-        while len(vector) != 0:
-            cell = vector[vector == np.max(vector)]
-            array[str(cell.index[0])] = cell.values[0] #futurewarning
-            vector = vector.drop(index=cell.index, axis=1)
-        return pd.Series(array)
-
+    def corelations_histograms(self, corrmatrix, save=False):
+        for col in corrmatrix.columns:
+            sns.histplot(data=corrmatrix[col], bins=20)
+            plt.xlim(0, 1)
+            plt.ylim(0, 10)
+            plt.show()
+            if save is True:
+                plt.savefig(f'./figures/corelation_histograms/{col}')

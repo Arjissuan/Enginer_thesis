@@ -10,7 +10,7 @@ class Tests:
         self.df = pd.read_excel('../databases/AMP_30_03_2020_IMPROVED.xlsx').drop(columns=['Kolumna1', 'Age Tre of life', 'Radius_gyration', 'Abrev.'])
         self.columns = ["A_BACT", "A_VIRAL", 'A_CANCER', 'A_FUNGAL', 'RANGE'] #'Abrev.', has to be done
         self.cechy = self.df.describe().columns
-        self.chosen_AMP_df = pd.read_excel('../databases/Final_Selected_Diverse_AMPs.xlsx').drop(columns=['Kolumna1', 'Age Tre of life', 'Radius_gyration', 'Abrev.'])
+        self.chosen_AMP_df = pd.read_excel('../databases/other_matrixes/Final_Selected_Diverse_AMPs.xlsx').drop(columns=['Kolumna1', 'Age Tre of life', 'Radius_gyration', 'Abrev.'])
 
     def clsterization(self, index):
         item = self.columns[index]

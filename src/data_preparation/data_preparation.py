@@ -126,3 +126,12 @@ class DataPreparation:
 
         listed_repets = listed_repets.split('_')
         return listed_repets[0:len(listed_repets)-1]
+
+    def corelations_rank(self, matrix, column): #zwraca ranking najwiekszych zmian korelacji/najwiekszych korelacji.
+        vector = matrix[column].copy()
+        array = {}
+        while len(vector) != 0:
+            cell = vector[vector == np.max(vector)]
+            array[str(cell.index[0])] = cell.values[0] #futurewarning
+            vector = vector.drop(index=cell.index, axis=1)
+        return pd.Series(array)

@@ -8,7 +8,7 @@ class ML_data:
 
     def creating_bina_class(self, df, column, value=2.48):
         vector = df[column].values
-        return np.logical_not(vector > value).astype(np.int8)
+        return np.logical_not(vector < value).astype(np.int8)
 
     def test_data(self, x: pd.DataFrame,
                   y: pd.Series,
@@ -47,3 +47,9 @@ class ML_data:
             new_df = pd.concat([new_df, new_columns], axis=1)
 
         return new_df
+
+    def Pareto_Scaling(self, vector_values: np.ndarray) -> np.ndarray:
+        stnd_dev = np.std(vector_values)
+        mean = np.mean(vector_values)
+        PS = list(map(lambda x: (x - mean)/stnd_dev**(1/2), vector_values))
+        return np.array(PS)

@@ -19,18 +19,21 @@ class ML_implemented:
             X_test, X_train = X_test.apply(self.ml_data.Pareto_Scaling), X_train.apply(self.ml_data.Pareto_Scaling)
 
         if feature_select == 'SelectKBest':
-            selectKbest = SelectKBest(score_func=f_classif, k=n_feature)  # feature selection without data leekage
+            selectKbest = SelectKBest(score_func=f_classif, k=n_feature)  # feature selection with prevented data leekage
             selectKbest.fit(X_train, y_train)
             selected_features = selectKbest.get_feature_names_out()
             # print(selected_features)
             return X_test[selected_features], y_test, X_train[selected_features], y_train
-        elif feature_select == 'By_correlation_changes':
-            corrmatrix = self.analasis.corelations_presentation()
-            self.analasis.corelations_histograms(corrmatrix[3])
-            selected_features = input('Choosen: ')
-            return X_test[selected_features], y_test, X_train[selected_features], y_train
-        else:
+        elif feature_select == 'None':
             return X_test, y_test, X_train, y_train
+        # elif feature_select == 'By_correlation_changes':
+        #     train_df = pd.concat([X_test, y_test], axis=1)
+        #     corrmatrix = self.analasis.corelations_presentation(train_df, self.ml_data.Class_vector, heatmaps=True)
+        #     self.analasis.corelations_histograms(corrmatrix[3])
+        #     selected_features = input('Choosen: ')
+        #     return X_test[selected_features], y_test, X_train[selected_features], y_train
+        else:
+            return KeyError
 
 
 

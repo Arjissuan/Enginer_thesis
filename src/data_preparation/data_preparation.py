@@ -33,7 +33,7 @@ class DataPreparation:
         corr = np.ma.corrcoef(m_df)
         return corr
 
-    def heatmaps(self, corld_df, cechy, title, size=(40, 35), font_scale=1.5, fmt='.1f', annota=7, save=False):
+    def heatmaps(self, corld_df, cechy, title, size=(40, 35), font_scale=3, fmt='.1f', annota=24, save=False):
         plt.figure(figsize=size)
         plt.title(title)
         sns.set(font_scale=font_scale, )

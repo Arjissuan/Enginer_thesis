@@ -92,7 +92,7 @@ class Implementations:
         corelated = list(cechy[i] for i,c in enumerate(corrmat[indx]) if c > corr_level)
         return df.drop(columns=corelated, axis=1)
 
-    def corelations_presentation(self, df: pd.DataFrame, column: str, level: float = 2.48, heatmaps=1, save_heatm=False, save_df=False):
+    def corelations_presentation(self, df: pd.DataFrame, column: str, level: float = 2.48, heatmaps=False, save_heatm=False, save_df=False):
         corrmat = self.prep.correlation(df)
         matrix_low = self.prep.correlation(df[df[column] <= level])
         matrix_high = self.prep.correlation(df[df[column] > level])

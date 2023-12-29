@@ -6,11 +6,15 @@ if __name__ == '__main__':
     analysis = Implementations('BomanIndex')
     machinelern = ML_implemented(analysis.name_column)
 
-    corrnorms = analysis.corelations_presentation(analysis.normalized_df, analysis.name_column, 2.48,True, True)
-    print(analysis.prep.corelations_rank(corrnorms[3], analysis.name_column))
+    # corrnorms = analysis.corelations_presentation(analysis.normalized_df, analysis.name_column, 2.48,True, True)
+    # print(analysis.prep.corelations_rank(corrnorms[3], analysis.name_column))
 
 
     df = analysis.normalized_df[analysis.prep.get_cechy(analysis.normalized_df)]
+    X_test, y_test, X_train, y_train = machinelern.train_test_split_feature_select(df=df, train_size=0.26, r_state=1,feature_select='None', normalizzation=False)
+    predictions_matrix = machinelern.predictions(X_test, y_test, X_train, y_train)
+    print(predictions_matrix)
+    predictions_matrix.to_excel('./prediction_nonormandkbest.xlsx')
 
     X_test, y_test, X_train, y_train = machinelern.train_test_split_feature_select(df=df, train_size=0.26, r_state=1)
     predictions_matrix = machinelern.predictions(X_test, y_test, X_train, y_train)

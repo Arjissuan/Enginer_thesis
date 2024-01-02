@@ -6,9 +6,9 @@ class ML_data:
     def __init__(self, class_vector):
         self.Class_vector = class_vector
 
-    def creating_bina_class(self, df, column, value=2.48):
+    def creating_bina_class(self, df: pd.DataFrame, column: str, value: float= 2.48) -> pd.Series:
         vector = df[column].values
-        return np.logical_not(vector < value).astype(np.int8)
+        return pd.Series(data=np.logical_not(vector < value).astype(np.int8), name=self.Class_vector)
 
     def test_data(self, x: pd.DataFrame,
                   y: pd.Series,

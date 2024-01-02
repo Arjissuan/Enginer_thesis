@@ -44,11 +44,13 @@ class ML_implemented:
         bayes = est.Bayes()
         decisoTree = est.DecisionTree()
         quadra = est.QuadraticDiscrAnal()
+        MLP = est.MultiPerceptron()
         matrix = pd.concat([est.confusion_matrix(forest, 'Forest'),
                             est.confusion_matrix(svm, 'SVM'),
                             est.confusion_matrix(bayes, 'Bayes'),
                             est.confusion_matrix(decisoTree, 'DecisionTree'),
-                            est.confusion_matrix(quadra, 'QuadraticDiscriminantAnalasis')
+                            est.confusion_matrix(quadra, 'QuadraticDiscriminantAnalasis'),
+                            est.confusion_matrix(MLP, 'MultiLayeredPerceptron')
                             ], axis=1)
         return matrix
 
@@ -71,11 +73,13 @@ class ML_implemented:
             bayes = est.Bayes()
             decisoTree = est.DecisionTree()
             quadra = est.QuadraticDiscrAnal()
+            MLP = est.MultiPerceptron()
             matrix = pd.concat([est.confusion_matrix(forest, 'Forest'),
                                 est.confusion_matrix(svm, 'SVM'),
                                 est.confusion_matrix(bayes, 'Bayes'),
                                 est.confusion_matrix(decisoTree, 'DecisionTree'),
-                                est.confusion_matrix(quadra, 'QuadraticDiscriminantAnalasis')
+                                est.confusion_matrix(quadra, 'QuadraticDiscriminantAnalasis'),
+                                est.confusion_matrix(MLP, 'MultiLayeredPerceptron'),
                                 ], axis=1)
             macierze.append(matrix.values)
         cross_vali_stats = np.stack(macierze, axis=2)

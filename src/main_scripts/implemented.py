@@ -11,8 +11,8 @@ class Implementations:
                                     figure_dest='./figures',
                                     columns_to_drop=['Age Tre of life', 'Radius_gyration', 'Abrev.'])
         self.normalized_df = self.dataframe_preparation(self.prep.get_dataset(),
-                                                        ['Cysteines', 'Small_aminoacids'],
-                                                        [['C',], ['G', 'L']],
+                                                        ['Cysteines','Asphartic Acid', 'Small_aminoacids'],
+                                                        [['C',], ['D'], ['G', 'L']],
                                                         rel_column='Length')
 
     def dataframe_preparation(self, df: pd.DataFrame,
@@ -49,7 +49,7 @@ class Implementations:
             data_frame = new_df.drop(columns=new_columns)
             return pd.concat([normalized_df, data_frame], axis=1)
 
-    def repetition_results(self, sequences: pd.Series, lengths: pd.Series) -> pd.DataFrame:
+    def repetition_results(self, sequences: pd.Series) -> pd.DataFrame:
         def generate_repetions(seqs):
             for s in seqs:
                 vector = self.prep.repetitions(s)
@@ -61,8 +61,10 @@ class Implementations:
                                columns=['Listed_Repetitions', 'Total_repetitions']
                                )
         repetition_length = self.prep.count_amino_acids(seria=repeted['Total_repetitions'], amiacids=code_letters)
+        lengths = list(map(lambda x: len(x), sequences))
+        repeted['Total_Sequence'] = sequences
         repeted['Repetitions_length'] = list(repetition_length)
-        repeted['Peptide_length'] = lengths.values
+        repeted['Peptide_length'] = lengths
         repeted['Repetitions_percentages'] = self.prep.data_normalization(repeted, 'Peptide_length', ['Repetitions_length',])
         repeted['Number_of_repe'] = list(map(lambda x: len(x), repeted['Listed_Repetitions']))
         return repeted

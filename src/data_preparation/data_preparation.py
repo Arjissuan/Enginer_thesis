@@ -21,7 +21,7 @@ class DataPreparation:
     def get_cechy(self, df):
         return df.describe().columns
 
-    def clsterization(self, index, df): #change it to more ogolna
+    def clsterization(self, index, df):
         item = self.clst_columns[index]
         values_set = tuple(set(df[item]))
         df_list = dict(map(lambda x: (f'{item}_{x}', df[df[item] == x]), values_set))
@@ -33,7 +33,7 @@ class DataPreparation:
         corr = np.ma.corrcoef(m_df)
         return corr
 
-    def heatmaps(self, corld_df, cechy, title, size=(40, 35), font_scale=3, fmt='.1f', annota=24, save=False):
+    def heatmaps(self, corld_df, cechy, title, size=(40, 35), font_scale=2.9 , fmt='.1f', annota=24, save=False):
         plt.figure(figsize=size)
         plt.title(title)
         sns.set(font_scale=font_scale, )

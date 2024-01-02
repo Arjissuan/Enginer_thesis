@@ -103,5 +103,5 @@ if __name__ == "__main__":
     # data_normalization_test()
     tt = Tests()
     # print(tt.cross_vali_shufle(tt.df[tt.cechy], tt.df[tt.columns[0]],0.25, 0))
-    #repetiton_test()
+    repetiton_test()
     #corelations_drop('BomanIndex', 0.5, 'df')

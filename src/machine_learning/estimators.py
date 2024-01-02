@@ -3,6 +3,7 @@ from sklearn import svm, tree
 from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
+from sklearn.neural_network import MLPClassifier
 import numpy as np
 
 
@@ -38,6 +39,11 @@ class Estimators:
         quadro = QuadraticDiscriminantAnalysis()
         quadro.fit(X=self.train_values, y=self.train_class)
         return quadro.predict(X=self.test_values)
+
+    def MultiPerceptron(self, layers_sizes=(5,3,1)):
+        mp = MLPClassifier(hidden_layer_sizes=layers_sizes, activation='tanh', max_iter=400)
+        mp.fit(X=self.train_values, y=self.train_class)
+        return mp.predict(X=self.test_values)
 
     def confusion_matrix(self, prediction, estimator):
         TP = np.sum(np.logical_and(self.test_class, prediction))

@@ -12,7 +12,8 @@ databases/
 .ipynb_checkpoints
 data_explotation.ipynb
 # engineer theseis
-documents
+documents/
+figures/
 
 # Distribution / packaging
 .Python

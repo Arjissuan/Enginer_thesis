@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+import os
 from src.data_preparation.data_preparation import DataPreparation
 
 class Implementations:
@@ -11,10 +12,9 @@ class Implementations:
                                     figure_dest='./figures',
                                     columns_to_drop=['Age Tre of life', 'Radius_gyration', 'Abrev.'])
         self.normalized_df = self.dataframe_preparation(self.prep.get_dataset(),
-                                                        ['Cysteines','Asphartic Acid', 'Small_aminoacids'],
-                                                        [['C',], ['D'], ['G', 'L']],
+                                                        ['Cysteines', 'Asphartic Acid', 'Small_aminoacids'],
+                                                        [['C', ], ['D'], ['G', 'L']],
                                                         rel_column='Length')
-
     def dataframe_preparation(self, df: pd.DataFrame,
                               new_columns: list[str],
                               count_amins: list[list[str]],
@@ -48,6 +48,7 @@ class Implementations:
         else:
             data_frame = new_df.drop(columns=new_columns)
             return pd.concat([normalized_df, data_frame], axis=1)
+
 
     def repetition_results(self, sequences: pd.Series) -> pd.DataFrame:
         def generate_repetions(seqs):
@@ -94,7 +95,13 @@ class Implementations:
         corelated = list(cechy[i] for i,c in enumerate(corrmat[indx]) if c > corr_level)
         return df.drop(columns=corelated, axis=1)
 
-    def corelations_presentation(self, df: pd.DataFrame, column: str, level: float = 2.48, heatmaps=False, save_heatm=False, save_df=False):
+    def corelations_presentation(self, df: pd.DataFrame, column: str, level: float = 2.48, heatmaps=False, save_heatm=False, save_df=False, titles='non_custom'):
+        if titles == 'non_custom':
+            titles = ['Heatmap of corelations between columns',
+                      f'Heatmap of corelations when {column} values are smaller than {level}',
+                      f'Heatmap of corelations when {column} values are bigger than {level}',
+                      f'Heatmap of change in corelations between {column} level value of {level}']
+
         corrmat = self.prep.correlation(df)
         matrix_low = self.prep.correlation(df[df[column] <= level])
         matrix_high = self.prep.correlation(df[df[column] > level])
@@ -104,15 +111,19 @@ class Implementations:
         crmm_high = pd.DataFrame(data=matrix_high, columns=cechy, index=cechy)
         roznica = ((crmm_low - crmm_high)**2)**(1/2)
         if heatmaps is True:
-            titles = ['Heatmap of corelations between columns',
-                      f'Heatmap of corelations when {column} values are smaller than {level}',
-                      f'Heatmap of corelations when {column} values are bigger than {level}',
-                      f'Heatmap of change in corelations between {column} level value of {level}']
             for indx, matrix in enumerate([crmm, crmm_low, crmm_high, roznica]):
-                self.prep.heatmaps(matrix, matrix.columns, titles[indx], save=save_heatm)
+                self.prep.heatmaps(matrix,
+                                   cechy=matrix.columns,
+                                   title=titles[indx],
+                                   size=(30,25),
+                                   font_scale=1.9,
+                                   fmt='.2f',
+                                   annota=10,
+                                   save=save_heatm)
         if save_df is True:
-            for matrix in (crmm, crmm_low, crmm_high, roznica):
-                matrix.to_excel(input('Corelation matrix destination:'))
+            for i, matrix in enumerate([crmm, crmm_low, crmm_high, roznica]):
+                matrix.to_excel(os.path.join('./databases/wyniki/', f'{titles[i]}.xlsx'))
+
         return crmm, crmm_low, crmm_high, roznica
 
     def corelations_histograms(self, corrmatrix, save=False):

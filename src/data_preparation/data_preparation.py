@@ -42,10 +42,11 @@ class DataPreparation:
                     annot_kws={'size': annota},
                     xticklabels=cechy,
                     yticklabels=cechy)
+
         if save is True:
             name = f'{title}.pdf'
             plt.savefig(os.path.join(self.figure_dest, name))
-        plt.show()
+
 
 
     def mask_nans(self, df: pd.DataFrame, threshold=0.05): ###zmienic aby usuwalo kolumny powyzej pewnej wartosci brakujacych rekordow
@@ -68,6 +69,7 @@ class DataPreparation:
             yield lista
 
     def data_normalization(self, df:pd.DataFrame, rel_col: str, cols_to_perc: list[str]) -> pd.DataFrame:
+        # Sluzy do uzyskiwania wartosci procentowych, glowniew kontekscie aminokwasow
         # returns specified normalized columns
         def generate_cols(data, relcol, num_of_percol):
             for i in num_of_percol:

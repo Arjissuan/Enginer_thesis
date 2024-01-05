@@ -125,7 +125,7 @@ class Tests:
                     repeted_amins[i].append(1)
                 else:
                     repeted_amins[i].append(0)
-        # print(repeted_amins)
+        print(repeted_amins)
         # making map of every center of repetition
         repe_centers = [0]*len(sequence)
         for i, vectors in enumerate(repeted_amins.values()):
@@ -133,7 +133,7 @@ class Tests:
                 for j in range(1, len(list(vectors)) - 1):
                     if vectors[j] == 1 and vectors[j - 1] == 1 and vectors[j + 1] == 1:
                         repe_centers[i+j] = sequence[i+j]
-        # print(repe_centers)
+        print(repe_centers)
         # changing map of repetition centers into listed repetiotions
         listed_repets = ''
         for indx, amino in enumerate(repe_centers):
@@ -146,5 +146,5 @@ class Tests:
                 listed_repets+=f'{repe_centers[indx-1]}_'
 
         listed_repets = listed_repets.split('_')
-        # print(''.join(listed_repets))
+        print(''.join(listed_repets))
         return listed_repets[0:len(listed_repets)-1]

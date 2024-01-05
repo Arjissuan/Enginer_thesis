@@ -10,17 +10,6 @@ if __name__ == '__main__':
     machinelern = ML_implemented(analysis.name_column)
 
     df = analysis.normalized_df[analysis.prep.get_cechy(analysis.normalized_df)]
-    # i=0
-    # while i <= len(df.columns):
-    #     j=i
-    #     i+=6
-    #     current = list(df.columns[z] for z in range(j, i) if z <= len(df.columns)-1)
-    #     print(current)
-    #     df.hist(column=current,bins=30, color='steelblue', edgecolor='black', figsize=[100, 100], linewidth=1.0, xlabelsize=8,
-    #             ylabelsize=8, grid=True)
-    #     plt.savefig(f'./figures/histogram{j,i}')
-    #     plt.show()
-
 
     X_test, y_test, X_train, y_train = machinelern.train_test_split_feature_select(df=df, train_size=0.2, r_state=42, feature_select='None', normalizzation=False)
     predictions_matrix = machinelern.predictions(X_test, y_test, X_train, y_train)

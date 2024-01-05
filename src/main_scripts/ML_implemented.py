@@ -36,7 +36,7 @@ class ML_implemented:
         bayes = est.Bayes()
         decisoTree = est.DecisionTree()
         quadra = est.QuadraticDiscrAnal()
-        MLP = est.MultiPerceptron(layers_sizes=(100,50), activ='identity', max_i=600)
+        MLP = est.MultiPerceptron(layers_sizes=(100,50), activ='tanh', max_i=600)
         matrix = pd.concat([est.confusion_matrix(forest, 'Forest'),
                             est.confusion_matrix(svm, 'SVM'),
                             est.confusion_matrix(bayes, 'Bayes'),
@@ -67,7 +67,7 @@ class ML_implemented:
             bayes = est.Bayes()
             decisoTree = est.DecisionTree()
             quadra = est.QuadraticDiscrAnal()
-            MLP = est.MultiPerceptron(layers_sizes=(100,50), activ='identity', max_i=600)
+            MLP = est.MultiPerceptron(layers_sizes=(100,50), activ='tanh', max_i=600)
             matrix = pd.concat([est.confusion_matrix(forest, 'Forest'),
                                 est.confusion_matrix(svm, 'SVM'),
                                 est.confusion_matrix(bayes, 'Bayes'),

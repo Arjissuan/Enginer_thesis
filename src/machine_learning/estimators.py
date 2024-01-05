@@ -7,7 +7,6 @@ from sklearn.neural_network import MLPClassifier
 import numpy as np
 
 
-
 class Estimators:
     def __init__(self, test_X, test_y, train_X, train_y):
         self.test_values = test_X

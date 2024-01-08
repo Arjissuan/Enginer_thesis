@@ -1,20 +1,18 @@
 import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 import os
 from src.data_preparation.data_preparation import DataPreparation
 
 class Implementations:
-    def __init__(self, name_column):
+    def __init__(self, name_column, new_columns, count_amins, rel_col, norm_cols=0):
         self.name_column = name_column
         self.prep = DataPreparation(dataset_dest='./databases/AMP_30_03_2020_IMPROVED.xlsx',
                                     clst_columns=["A_BACT", "A_VIRAL", 'A_CANCER', 'A_FUNGAL', 'RANGE'],
-                                    figure_dest='./figures',
                                     columns_to_drop=['Age Tre of life', 'Radius_gyration', 'Abrev.'])
         self.normalized_df = self.dataframe_preparation(self.prep.get_dataset(),
-                                                        ['Cysteines', 'Asphartic Acid', 'Small_aminoacids'],
-                                                        [['C', ], ['D'], ['G', 'L']],
-                                                        rel_column='Length')
+                                                        new_columns,
+                                                        count_amins,
+                                                        rel_col,
+                                                        norm_cols=norm_cols)
     def dataframe_preparation(self, df: pd.DataFrame,
                               new_columns: list[str],
                               count_amins: list[list[str]],
@@ -88,13 +86,6 @@ class Implementations:
                                    save=save)
 
 
-    def df_corelations_drop(self, df: pd.DataFrame, column: str, corr_level: float) -> pd.DataFrame:
-        cechy = self.prep.get_cechy(df)
-        corrmat = self.prep.correlation(df=df)
-        indx = list(i for i in range(len(cechy)) if cechy[i] == column)[0]
-        corelated = list(cechy[i] for i,c in enumerate(corrmat[indx]) if c > corr_level)
-        return df.drop(columns=corelated, axis=1)
-
     def corelations_presentation(self, df: pd.DataFrame, column: str, level: float = 2.48, heatmaps=False, save_heatm=False, save_df=False, titles='non_custom'):
         if titles == 'non_custom':
             titles = ['Heatmap of corelations between columns',
@@ -122,15 +113,6 @@ class Implementations:
                                    save=save_heatm)
         if save_df is True:
             for i, matrix in enumerate([crmm, crmm_low, crmm_high, roznica]):
-                matrix.to_excel(os.path.join('./databases/wyniki/', f'{titles[i]}.xlsx'))
+                matrix.to_excel(os.path.join(os.getcwd(), './databases/wyniki/', f'{titles[i]}.xlsx'))
 
         return crmm, crmm_low, crmm_high, roznica
-
-    def corelations_histograms(self, corrmatrix, save=False):
-        for col in corrmatrix.columns:
-            sns.histplot(data=corrmatrix[col], bins=20)
-            plt.xlim(0, 1)
-            plt.ylim(0, 10)
-            plt.show()
-            if save is True:
-                plt.savefig(f'./figures/corelation_histograms/{col}')

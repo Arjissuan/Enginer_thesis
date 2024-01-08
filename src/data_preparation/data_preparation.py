@@ -7,12 +7,10 @@ import os
 
 
 class DataPreparation:
-    def __init__(self, dataset_dest, clst_columns, figure_dest, columns_to_drop):
-        self.dataset_dest = dataset_dest
-        self.clst_columns = clst_columns  # 'Abrev.', has to be done
-        self.figure_dest = figure_dest
+    def __init__(self, dataset_dest, clst_columns, columns_to_drop):
+        self.dataset_dest = os.path.join(os.getcwd(), dataset_dest)
+        self.clst_columns = clst_columns
         self.columns_to_drop = columns_to_drop
-        # self.chosen_data = './databases/Final_Selected_Diverse_AMPs.xlsx'
 
     def get_dataset(self):
         df = pd.read_excel(self.dataset_dest, index_col=0).drop(columns=self.columns_to_drop)
@@ -45,8 +43,7 @@ class DataPreparation:
 
         if save is True:
             name = f'{title}.pdf'
-            plt.savefig(os.path.join(self.figure_dest, name))
-
+            plt.savefig(os.path.join(os.getcwd(), 'figures', name))
 
 
     def mask_nans(self, df: pd.DataFrame, threshold=0.05): ###zmienic aby usuwalo kolumny powyzej pewnej wartosci brakujacych rekordow

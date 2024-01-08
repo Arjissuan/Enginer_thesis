@@ -1,12 +1,16 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-
+import os
 from src.main_scripts.implemented import Implementations
 from src.main_scripts.ML_implemented import ML_implemented
 
 
 if __name__ == '__main__':
-    analysis = Implementations('BomanIndex')
+    analysis = Implementations(name_column='BomanIndex',
+                               new_columns=['Cysteines', 'Asphartic Acid', 'Small_aminoacids'],
+                               count_amins=[['C', ], ['D'], ['G', 'L']],
+                               rel_col='Length',
+                               norm_cols=0)
     machinelern = ML_implemented(analysis.name_column)
 
     df = analysis.normalized_df[analysis.prep.get_cechy(analysis.normalized_df)]

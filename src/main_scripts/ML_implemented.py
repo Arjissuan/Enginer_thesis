@@ -1,13 +1,11 @@
 from src.machine_learning.estimators import Estimators
 from src.machine_learning.ML_data import ML_data
-from src.main_scripts.implemented import Implementations
 import pandas as pd
 import numpy as np
 from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.model_selection import StratifiedKFold
 class ML_implemented:
     def __init__(self, Class_column):
-        self.analasis = Implementations(Class_column)
         self.ml_data = ML_data(Class_column)
         self.est = Estimators
 

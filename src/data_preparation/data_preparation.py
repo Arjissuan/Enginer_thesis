@@ -2,14 +2,14 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from collections.abc import Iterator
+from scipy import stats
 import seaborn as sns
 import os
 
 
 class DataPreparation:
-    def __init__(self, dataset_dest, clst_columns, columns_to_drop):
+    def __init__(self, dataset_dest, columns_to_drop):
         self.dataset_dest = os.path.join(os.getcwd(), dataset_dest)
-        self.clst_columns = clst_columns
         self.columns_to_drop = columns_to_drop
 
     def get_dataset(self):
@@ -18,12 +18,6 @@ class DataPreparation:
 
     def get_cechy(self, df):
         return df.describe().columns
-
-    def clsterization(self, index, df):
-        item = self.clst_columns[index]
-        values_set = tuple(set(df[item]))
-        df_list = dict(map(lambda x: (f'{item}_{x}', df[df[item] == x]), values_set))
-        return df_list
 
     def correlation(self, df):
         datarrays = df[self.get_cechy(df)].values.T
@@ -126,11 +120,7 @@ class DataPreparation:
         listed_repets = listed_repets.split('_')
         return listed_repets[0:len(listed_repets)-1]
 
-    def corelations_rank(self, matrix, column): #zwraca ranking najwiekszych zmian korelacji/najwiekszych korelacji.
-        vector = matrix[column].copy()
-        array = {}
-        while len(vector) != 0:
-            cell = vector[vector == np.max(vector)]
-            array[str(cell.index[0])] = cell.values[0] #futurewarning
-            vector = vector.drop(index=cell.index, axis=1)
-        return pd.Series(array)
+    def kologomorow_test(self, df):
+        kolo = dict(map(lambda x: (x, stats.kstest(df[x], stats.norm.cdf, alternative='less')), self.get_cechy(df)))
+        kolo_df = pd.DataFrame(kolo ,index=['statistic', 'pvalue']).T
+        return kolo_df

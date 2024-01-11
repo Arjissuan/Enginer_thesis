@@ -6,7 +6,6 @@ class Implementations:
     def __init__(self, name_column, new_columns, count_amins, rel_col, norm_cols=0):
         self.name_column = name_column
         self.prep = DataPreparation(dataset_dest='./databases/AMP_30_03_2020_IMPROVED.xlsx',
-                                    clst_columns=["A_BACT", "A_VIRAL", 'A_CANCER', 'A_FUNGAL', 'RANGE'],
                                     columns_to_drop=['Age Tre of life', 'Radius_gyration', 'Abrev.'])
         self.normalized_df = self.dataframe_preparation(self.prep.get_dataset(),
                                                         new_columns,
@@ -67,23 +66,6 @@ class Implementations:
         repeted['Repetitions_percentages'] = self.prep.data_normalization(repeted, 'Peptide_length', ['Repetitions_length',])
         repeted['Number_of_repe'] = list(map(lambda x: len(x), repeted['Listed_Repetitions']))
         return repeted
-
-
-    def clasterization_results(self, df, size=(40,35), font_scale=1.5, fmt='.1f', annota=7, save=False):
-        cechy = self.prep.get_cechy(df)
-        for indx in range(len(self.prep.clst_columns)):
-            claster = self.prep.clsterization(indx, df)
-            auto_corr = lambda x: (x, self.prep.correlation(claster[x]))
-            corrls = dict(map(auto_corr, claster.keys()))
-            for k in corrls.keys():
-                self.prep.heatmaps(corrls[k],
-                                   cechy=cechy,
-                                   title=k,
-                                   size=size,
-                                   font_scale=font_scale,
-                                   fmt=fmt,
-                                   annota=annota,
-                                   save=save)
 
 
     def corelations_presentation(self, df: pd.DataFrame, column: str, level: float = 2.48, heatmaps=False, save_heatm=False, save_df=False, titles='non_custom'):

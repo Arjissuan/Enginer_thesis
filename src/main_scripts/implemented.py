@@ -27,8 +27,8 @@ class Implementations:
                                 'Charged',
                                 'Basic',
                                 'Acidic', ]
-        elif norm_cols == 1:
-            standard_columns = list(input('Specify columns to normalization: '))
+        elif type(norm_cols) == list:
+            standard_columns = norm_cols #columns which are already in the df will be percentages in relation to column rel_columns
         else:
             standard_columns = None
 

@@ -34,11 +34,6 @@ class Estimators:
         forest.fit(X=self.train_values, y=self.train_class)
         return forest.predict(X=self.test_values)
 
-    def QuadraticDiscrAnal(self):
-        quadro = QuadraticDiscriminantAnalysis()
-        quadro.fit(X=self.train_values, y=self.train_class)
-        return quadro.predict(X=self.test_values)
-
     def MultiPerceptron(self, layers_sizes=(5,3,1), activ='tanh', max_i=400):
         mp = MLPClassifier(hidden_layer_sizes=layers_sizes, activation=activ, max_iter=max_i, alpha=0.5)
         mp.fit(X=self.train_values, y=self.train_class)

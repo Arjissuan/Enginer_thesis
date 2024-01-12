@@ -7,8 +7,8 @@ from src.main_scripts.ML_implemented import ML_implemented
 
 if __name__ == '__main__':
     analysis = Implementations(name_column='BomanIndex',
-                               new_columns=['Cysteines', 'Asphartic Acid', 'Small_aminoacids'],
-                               count_amins=[['C', ], ['D'], ['G', 'L']],
+                               new_columns=['Cysteines', 'Asphartic Acid', 'Popular_aminoacids'],
+                               count_amins=[['C', ], ['D'], ['G', 'L', 'K']],
                                rel_col='Length',
                                norm_cols=0)
     machinelern = ML_implemented(analysis.name_column)

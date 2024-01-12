@@ -12,7 +12,7 @@ class ML_implemented:
     def train_test_split_feature_select(self, df: pd.DataFrame, train_size=0.1, r_state=42, feature_select='SelectKBest', n_feature=10, normalizzation=True):
         x = df.drop(self.ml_data.Class_vector, axis=1)
         y = self.ml_data.creating_bina_class(df, self.ml_data.Class_vector, value=2.48)
-        X_test, y_test, X_train, y_train = self.ml_data.test_data(x, y, train_size=train_size, r_state=r_state)
+        X_test, y_test, X_train, y_train = self.ml_data.test_data(x=x, y=y, train_size=train_size, r_state=r_state)
         if normalizzation is True:
             X_test, X_train = X_test.apply(self.ml_data.Pareto_Scaling), X_train.apply(self.ml_data.Pareto_Scaling)
 
@@ -20,7 +20,7 @@ class ML_implemented:
             selectKbest = SelectKBest(score_func=f_classif, k=n_feature)  # feature selection with prevented data leekage
             selectKbest.fit(X_train, y_train)
             selected_features = selectKbest.get_feature_names_out()
-            # print(selected_features)
+            print(selected_features)
             return X_test[selected_features], y_test, X_train[selected_features], y_train
         elif feature_select == 'None':
             return X_test, y_test, X_train, y_train
@@ -33,13 +33,11 @@ class ML_implemented:
         svm = est.SVM(kernel='linear')
         bayes = est.Bayes()
         decisoTree = est.DecisionTree()
-        quadra = est.QuadraticDiscrAnal()
         MLP = est.MultiPerceptron(layers_sizes=(100,50), activ='tanh', max_i=600)
         matrix = pd.concat([est.confusion_matrix(forest, 'Forest'),
                             est.confusion_matrix(svm, 'SVM'),
                             est.confusion_matrix(bayes, 'Bayes'),
                             est.confusion_matrix(decisoTree, 'DecisionTree'),
-                            est.confusion_matrix(quadra, 'QuadraticDiscriminantAnalasis'),
                             est.confusion_matrix(MLP, 'MultiLayeredPerceptron')
                             ], axis=1)
         return matrix
@@ -64,13 +62,11 @@ class ML_implemented:
             svm = est.SVM(kernel='linear')
             bayes = est.Bayes()
             decisoTree = est.DecisionTree()
-            quadra = est.QuadraticDiscrAnal()
             MLP = est.MultiPerceptron(layers_sizes=(100,50), activ='tanh', max_i=600)
             matrix = pd.concat([est.confusion_matrix(forest, 'Forest'),
                                 est.confusion_matrix(svm, 'SVM'),
                                 est.confusion_matrix(bayes, 'Bayes'),
                                 est.confusion_matrix(decisoTree, 'DecisionTree'),
-                                est.confusion_matrix(quadra, 'QuadraticDiscriminantAnalasis'),
                                 est.confusion_matrix(MLP, 'MultiLayeredPerceptron'),
                                 ], axis=1)
             macierze.append(matrix.values)
@@ -97,15 +93,13 @@ class ML_implemented:
 
     def test_varoius_MLP(self, X_test, y_test, X_train, y_train):
         est = self.est(test_X=X_test, test_y=y_test, train_X=X_train, train_y=y_train)
-        mlp1 = est.MultiPerceptron(layers_sizes=(10,5), activ='relu', max_i=600)
-        mlp2 = est.MultiPerceptron(layers_sizes=(10,5), activ='tanh', max_i=600)
-        mlp3 = est.MultiPerceptron(layers_sizes=(10,5), activ='identity', max_i=600)
-        mlp4 = est.MultiPerceptron(layers_sizes=(10,5), activ='logistic', max_i=600)
+        mlp1 = est.MultiPerceptron(layers_sizes=(100,50), activ='relu', max_i=600)
+        mlp2 = est.MultiPerceptron(layers_sizes=(100,50), activ='tanh', max_i=600)
+        mlp4 = est.MultiPerceptron(layers_sizes=(100,50), activ='logistic', max_i=600)
         matrix = pd.concat(
             [
                 est.confusion_matrix(mlp1, 'MLP_relu'),
                 est.confusion_matrix(mlp2, 'MLP_tanh'),
-                est.confusion_matrix(mlp3, 'MLP_identity'),
                 est.confusion_matrix(mlp4, 'MLP_logistic'),
             ],
             axis=1

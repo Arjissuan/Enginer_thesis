@@ -9,7 +9,7 @@ class ML_implemented:
         self.ml_data = ML_data(Class_column)
         self.est = Estimators
 
-    def train_test_split_feature_select(self, df: pd.DataFrame, train_size=0.1, r_state=42, feature_select='SelectKBest', n_feature=10, normalizzation=True):
+    def train_test_split_feature_select(self, df: pd.DataFrame, train_size=0.8, r_state=42, feature_select='SelectKBest', n_feature=10, normalizzation=True):
         x = df.drop(self.ml_data.Class_vector, axis=1)
         y = self.ml_data.creating_bina_class(df, self.ml_data.Class_vector, value=2.48)
         X_test, y_test, X_train, y_train = self.ml_data.test_data(x=x, y=y, train_size=train_size, r_state=r_state)
@@ -17,10 +17,10 @@ class ML_implemented:
             X_test, X_train = X_test.apply(self.ml_data.Pareto_Scaling), X_train.apply(self.ml_data.Pareto_Scaling)
 
         if feature_select == 'SelectKBest':
-            selectKbest = SelectKBest(score_func=f_classif, k=n_feature)  # feature selection with prevented data leekage
+            selectKbest = SelectKBest(score_func=f_classif, k=n_feature)  # feature selection with prevented data leekage, it is important to select them on whole data
             selectKbest.fit(X_train, y_train)
             selected_features = selectKbest.get_feature_names_out()
-            print(selected_features)
+            print(selected_features) #selected features that will be used
             return X_test[selected_features], y_test, X_train[selected_features], y_train
         elif feature_select == 'None':
             return X_test, y_test, X_train, y_train
@@ -51,12 +51,12 @@ class ML_implemented:
         if normalization is True:
             X = X.apply(self.ml_data.Pareto_Scaling)
         for train, test in skf.split(X=X, y=y):
-            yield X.iloc[train, :], y[train], X.iloc[test, :], y[test]
+            yield X.iloc[train, :], y.iloc[train], X.iloc[test, :], y.iloc[test]
 
     def predictions_crossval(self, cross_val):
         macierze = []
         for train_test in list(cross_val):
-            Xtest, ytest, Xtrain, ytrain = train_test
+            Xtrain, ytrain, Xtest, ytest= train_test
             est = self.est(test_X=Xtest, test_y=ytest, train_X=Xtrain, train_y=ytrain)
             forest = est.Forest(n_est=1000)
             svm = est.SVM(kernel='linear')
